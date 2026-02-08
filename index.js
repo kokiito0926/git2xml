@@ -9,6 +9,7 @@ import http from "isomorphic-git/http/node";
 import * as path from "path";
 import { create as createXml } from "xmlbuilder2";
 import { glob } from "glob";
+import xml2js from "xml2js";
 
 function normalizeArgs(arg) {
 	if (!arg) return [];
@@ -56,6 +57,45 @@ if (files.length === 0) {
 	process.exit(1);
 }
 
+const builder = new xml2js.Builder({
+	cdata: true,
+	xmldec: { version: "1.0", encoding: "UTF-8" },
+	renderOpts: { pretty: true },
+});
+
+const allFiles = [];
+for (const file of files) {
+	const fullPath = path.join(worktreeDir, file);
+	const content = await memfs.promises.readFile(fullPath, "utf8");
+
+	allFiles.push({
+		name: path.basename(file),
+		path: file,
+		content: content
+	});
+}
+if (!allFiles.length) {
+	process.exit(1);
+}
+
+const xmlObject = {
+	repository: {
+		name: repoName,
+		url: repoUrl,
+	},
+	files: {
+		file: allFiles.map((f) => ({
+			name: f.name,
+			path: f.path,
+			content: f.content,
+		})),
+	},
+};
+
+const xmlOutput = builder.buildObject(xmlObject);
+console.log(xmlOutput);
+
+/*
 const root = createXml({ version: "1.0", encoding: "UTF-8" }).ele("repository", {
 	name: repoName,
 	url: repoUrl,
@@ -71,3 +111,4 @@ for (const filePath of files) {
 const xmlString = root.end({ prettyPrint: true });
 
 console.log(xmlString);
+*/
