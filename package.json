@@ -34,6 +34,10 @@
 		"test": "node --test"
 	},
 	"dependencies": {
+		"glob": "^13.0.1",
+		"isomorphic-git": "^1.36.3",
+		"memfs": "^4.56.10",
+		"xmlbuilder2": "^4.0.3",
 		"zx": "^8.8.4"
 	},
 	"engines": {
