@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
-// >> $ ./index.js --url https://github.com/kokiito0926/hypernode.git
+// >> $ ./index.js https://github.com/kokiito0926/hypernode.git
 
-import { $, chalk, argv, echo } from "zx";
+import { argv } from "zx";
 import { Volume, createFsFromVolume } from "memfs";
 import git from "isomorphic-git";
 import http from "isomorphic-git/http/node";
 import * as path from "path";
-import { create as createXml } from "xmlbuilder2";
 import { glob } from "glob";
 import xml2js from "xml2js";
 
@@ -18,8 +17,6 @@ function normalizeArgs(arg) {
 }
 
 const repoUrl = argv._[0];
-// const repoUrl = argv.url;
-
 if (!repoUrl) {
 	process.exit(1);
 }
@@ -95,21 +92,3 @@ const xmlObject = {
 
 const xmlOutput = builder.buildObject(xmlObject);
 console.log(xmlOutput);
-
-/*
-const root = createXml({ version: "1.0", encoding: "UTF-8" }).ele("repository", {
-	name: repoName,
-	url: repoUrl,
-});
-
-for (const filePath of files) {
-	const fullPath = path.join(worktreeDir, filePath);
-	const content = await memfs.promises.readFile(fullPath, "utf8");
-
-	root.ele("file", { path: filePath }).ele("content").dat(content).up().up();
-}
-
-const xmlString = root.end({ prettyPrint: true });
-
-console.log(xmlString);
-*/
