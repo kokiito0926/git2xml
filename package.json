@@ -1,0 +1,42 @@
+{
+	"name": "@kokiito0926/git2xml",
+	"version": "0.0.0",
+	"private": false,
+	"description": "gitで管理しているファイルをXML形式でまとめることができるコマンドラインのツールです。",
+	"keywords": [
+		"cli",
+		"bash",
+		"shell",
+		"script",
+		"nodejs",
+		"git",
+		"xml",
+		"git2xml"
+	],
+	"homepage": "https://github.com/kokiito0926/git2xml#readme",
+	"publishConfig": {
+		"access": "public"
+	},
+	"bin": {
+		"git2xml": "index.js"
+	},
+	"bugs": {
+		"url": "https://github.com/kokiito0926/git2xml/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kokiito0926/git2xml.git"
+	},
+	"license": "MIT",
+	"author": "Koki Ito <kokiito0926@gmail.com>",
+	"type": "module",
+	"scripts": {
+		"test": "node --test"
+	},
+	"dependencies": {
+		"zx": "^8.8.4"
+	},
+	"engines": {
+		"node": ">=24.0.0"
+	}
+}
