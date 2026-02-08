@@ -17,7 +17,8 @@ function normalizeArgs(arg) {
 	return list.flatMap((item) => item.split(",")).map((item) => item.trim());
 }
 
-const repoUrl = argv.url;
+const repoUrl = argv._[0];
+// const repoUrl = argv.url;
 
 if (!repoUrl) {
 	process.exit(1);
