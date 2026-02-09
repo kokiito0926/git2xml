@@ -16,6 +16,13 @@ function normalizeArgs(arg) {
 	return list.flatMap((item) => item.split(",")).map((item) => item.trim());
 }
 
+function isBinary(buffer) {
+	for (let i = 0; i < Math.min(buffer.length, 4096); i++) {
+		if (buffer[i] === 0) return true;
+	}
+	return false;
+}
+
 const repoUrl = argv._[0];
 if (!repoUrl) {
 	process.exit(1);
@@ -64,7 +71,17 @@ const builder = new xml2js.Builder({
 const allFiles = [];
 for (const file of files) {
 	const fullPath = path.join(worktreeDir, file);
+
+	const buffer = await memfs.promises.readFile(fullPath);
+	if (isBinary(buffer)) {
+		continue;
+	}
+
+	const content = buffer.toString("utf8");
+
+	/*
 	const content = await memfs.promises.readFile(fullPath, "utf8");
+	*/
 
 	allFiles.push({
 		name: path.basename(file),
