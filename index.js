@@ -78,6 +78,7 @@ for (const file of files) {
 	}
 
 	const content = buffer.toString("utf8");
+	if (!content) continue;
 
 	/*
 	const content = await memfs.promises.readFile(fullPath, "utf8");
