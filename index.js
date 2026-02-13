@@ -18,10 +18,20 @@ function isBinary(buffer) {
 	return false;
 }
 
+const parseBool = (val, defaultVal) => {
+	if (val === undefined || val === null) return defaultVal;
+	if (typeof val === "boolean") return val;
+	if (val === "true") return true;
+	if (val === "false") return false;
+	return !!val;
+};
+
 const repoUrl = argv._[0];
 if (!repoUrl) {
 	process.exit(1);
 }
+
+const dot = parseBool(argv?.dot, false);
 
 const includePattern = argv.pattern || "**/*";
 
@@ -49,6 +59,7 @@ const files = await glob(includePattern, {
 	cwd: worktreeDir,
 	fs: memfs,
 	nodir: true,
+	dot: dot,
 	ignore: ignorePatterns,
 });
 
