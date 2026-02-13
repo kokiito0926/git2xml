@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 // >> $ ./index.js https://github.com/kokiito0926/hypernode.git
+// >> $ ./index.js https://github.com/kokiito0926/hypernode.git --pattern "**/*.js"
 
 import { argv } from "zx";
 import { Volume, createFsFromVolume } from "memfs";
@@ -28,8 +29,9 @@ if (!repoUrl) {
 	process.exit(1);
 }
 
-const includePatterns = normalizeArgs(argv.patterns);
-if (includePatterns.length === 0) includePatterns.push("**/*");
+const includePattern = argv.pattern || "**/*";
+// const includePatterns = normalizeArgs(argv.patterns);
+// if (includePatterns.length === 0) includePatterns.push("**/*");
 
 const ignorePatterns = normalizeArgs(argv.ignore);
 ignorePatterns.push("**/.git/**");
@@ -51,7 +53,7 @@ await git.clone({
 	onAuth: () => (githubToken ? { username: githubToken } : {}),
 });
 
-const files = await glob(includePatterns, {
+const files = await glob(includePattern, {
 	cwd: worktreeDir,
 	fs: memfs,
 	nodir: true,
