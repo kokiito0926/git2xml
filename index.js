@@ -11,12 +11,6 @@ import * as path from "path";
 import { glob } from "glob";
 import xml2js from "xml2js";
 
-function normalizeArgs(arg) {
-	if (!arg) return [];
-	const list = Array.isArray(arg) ? arg : [arg];
-	return list.flatMap((item) => (typeof item === 'string' ? item.split(",") : [])).map((item) => item.trim());
-}
-
 function isBinary(buffer) {
 	for (let i = 0; i < Math.min(buffer.length, 4096); i++) {
 		if (buffer[i] === 0) return true;
@@ -31,7 +25,7 @@ if (!repoUrl) {
 
 const includePattern = argv.pattern || "**/*";
 
-const ignorePatterns = normalizeArgs(argv.ignore);
+const ignorePatterns = argv.ignore ? (Array.isArray(argv.ignore) ? argv.ignore : [argv.ignore]) : [];
 ignorePatterns.push("**/.git/**");
 
 const vol = new Volume();
