@@ -14,7 +14,7 @@ import xml2js from "xml2js";
 function normalizeArgs(arg) {
 	if (!arg) return [];
 	const list = Array.isArray(arg) ? arg : [arg];
-	return list.flatMap((item) => item.split(",")).map((item) => item.trim());
+	return list.flatMap((item) => (typeof item === 'string' ? item.split(",") : [])).map((item) => item.trim());
 }
 
 function isBinary(buffer) {
@@ -38,7 +38,7 @@ ignorePatterns.push("**/.git/**");
 
 const vol = new Volume();
 const memfs = createFsFromVolume(vol);
-const repoName = path.basename(repoUrl, ".git");
+const repoName = path.posix.basename(new URL(repoUrl).pathname, ".git");
 const worktreeDir = `/${repoName}`;
 
 const githubToken = process.env.GITHUB_TOKEN;
@@ -72,22 +72,27 @@ const builder = new xml2js.Builder({
 
 const allFiles = [];
 for (const file of files) {
-	const fullPath = path.join(worktreeDir, file);
+	const fullPath = path.posix.join(worktreeDir, file);
 
 	const buffer = await memfs.promises.readFile(fullPath);
 	if (isBinary(buffer)) {
 		continue;
 	}
 
-	const content = buffer.toString("utf8");
-	if (!content) continue;
+	const rawContent = buffer.toString("utf8");
+	if (!rawContent) continue;
 
 	/*
 	const content = await memfs.promises.readFile(fullPath, "utf8");
 	*/
 
+	// Handle CDATA breakout: ]]> -> ]]] \> <![CDATA[ > (conceptually, by escaping or splitting)
+	// Actually xml2js builder with cdata: true handles basic escaping, but ]]> inside CDATA is tricky.
+	// We split "]]>" into "]]" + ">" to prevent breakout while keeping it readable for LLMs.
+	const content = rawContent.replace(/]]>/g, "]]]]><![CDATA[>");
+
 	allFiles.push({
-		name: path.basename(file),
+		name: path.posix.basename(file),
 		path: file,
 		content: content
 	});
