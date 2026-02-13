@@ -30,8 +30,6 @@ if (!repoUrl) {
 }
 
 const includePattern = argv.pattern || "**/*";
-// const includePatterns = normalizeArgs(argv.patterns);
-// if (includePatterns.length === 0) includePatterns.push("**/*");
 
 const ignorePatterns = normalizeArgs(argv.ignore);
 ignorePatterns.push("**/.git/**");
@@ -64,12 +62,6 @@ if (files.length === 0) {
 	process.exit(1);
 }
 
-const builder = new xml2js.Builder({
-	cdata: true,
-	xmldec: { version: "1.0", encoding: "UTF-8" },
-	renderOpts: { pretty: true },
-});
-
 const allFiles = [];
 for (const file of files) {
 	const fullPath = path.posix.join(worktreeDir, file);
@@ -79,17 +71,12 @@ for (const file of files) {
 		continue;
 	}
 
-	const rawContent = buffer.toString("utf8");
-	if (!rawContent) continue;
+	let content = buffer.toString("utf8");
+	if (!content) continue;
 
-	/*
-	const content = await memfs.promises.readFile(fullPath, "utf8");
-	*/
-
-	// Handle CDATA breakout: ]]> -> ]]] \> <![CDATA[ > (conceptually, by escaping or splitting)
-	// Actually xml2js builder with cdata: true handles basic escaping, but ]]> inside CDATA is tricky.
-	// We split "]]>" into "]]" + ">" to prevent breakout while keeping it readable for LLMs.
-	const content = rawContent.replace(/]]>/g, "]]]]><![CDATA[>");
+	// Filter invalid XML 1.0 characters: #x9, #xA, #xD, [#x20-#xD7FF], [#xE000-#xFFFD], [#x10000-#x10FFFF]
+	content = content.replace(/[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u{10000}-\u{10FFFF}]/gu, "");
+	if (!content) continue;
 
 	allFiles.push({
 		name: path.posix.basename(file),
@@ -110,10 +97,16 @@ const xmlObject = {
 		file: allFiles.map((f) => ({
 			name: f.name,
 			path: f.path,
-			content: f.content,
+			content: { _: f.content },
 		})),
 	},
 };
+
+const builder = new xml2js.Builder({
+	cdata: true,
+	xmldec: { version: "1.0", encoding: "UTF-8" },
+	renderOpts: { pretty: true },
+});
 
 const xmlOutput = builder.buildObject(xmlObject);
 console.log(xmlOutput);
