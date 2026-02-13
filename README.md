@@ -17,16 +17,16 @@ GitのリポジトリのURLを指定して、コマンドを実行します。
 $ git2xml https://github.com/kokiito0926/git2xml.git
 ```
 
---patternsのオプションを用いると、特定のファイルのみを含めることができます。
+--patternのオプションを用いると、特定のファイルのみを含めることができます。
 
 ```bash
-$ git2xml https://github.com/kokiito0926/git2xml.git --patterns "**/*.js"
+$ git2xml https://github.com/kokiito0926/git2xml.git --pattern "**/*.js"
 ```
 
 --ignoreのオプションを用いると、特定のファイルを除外することができます。
 
 ```bash
-$ git2xml https://github.com/kokiito0926/git2xml.git --ignore ./package-lock.json 
+$ git2xml https://github.com/kokiito0926/git2xml.git --ignore "./package-lock.json" 
 ```
 
 ## ライセンス
