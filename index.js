@@ -2,6 +2,7 @@
 
 // >> $ ./index.js https://github.com/kokiito0926/hypernode.git
 // >> $ ./index.js https://github.com/kokiito0926/hypernode.git --pattern "**/*.js"
+// >> $ ./index.js https://github.com/kokiito0926/hypernode.git --ignore "./package*.json"
 
 import { argv } from "zx";
 import { Volume, createFsFromVolume } from "memfs";
@@ -35,8 +36,10 @@ const dot = parseBool(argv?.dot, false);
 
 const includePattern = argv.pattern || "**/*";
 
-const ignorePatterns = argv.ignore ? (Array.isArray(argv.ignore) ? argv.ignore : [argv.ignore]) : [];
-ignorePatterns.push("**/.git/**");
+const ignorePattern = ["**/.git/**"];
+if (argv.ignore) {
+	ignorePattern.push(...(Array.isArray(argv.ignore) ? argv.ignore : argv.ignore.split(",")));
+}
 
 const vol = new Volume();
 const memfs = createFsFromVolume(vol);
@@ -60,7 +63,7 @@ const files = await glob(includePattern, {
 	fs: memfs,
 	nodir: true,
 	dot: dot,
-	ignore: ignorePatterns,
+	ignore: ignorePattern,
 });
 
 if (files.length === 0) {
