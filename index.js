@@ -38,7 +38,7 @@ const includePattern = argv.pattern || "**/*";
 
 const ignorePattern = ["**/.git/**"];
 if (argv.ignore) {
-	ignorePattern.push(...(Array.isArray(argv.ignore) ? argv.ignore : argv.ignore.split(",")));
+	ignorePattern.push(argv.ignore);
 }
 
 const vol = new Volume();
