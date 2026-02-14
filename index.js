@@ -33,7 +33,7 @@ if (!repoUrl) {
 
 const dot = parseBool(argv?.dot, false);
 
-const includePattern = argv.pattern || "**/*";
+const includePattern = argv.include || "**/*";
 
 const ignorePattern = ["**/.git/**"];
 if (argv.ignore) {
