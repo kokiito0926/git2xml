@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
 // >> $ ./index.js https://github.com/kokiito0926/hypernode.git
-// >> $ ./index.js https://github.com/kokiito0926/hypernode.git --pattern "**/*.js"
+// >> $ ./index.js https://github.com/kokiito0926/hypernode.git --include "**/*.js"
 // >> $ ./index.js https://github.com/kokiito0926/hypernode.git --ignore "./package*.json"
 
-import { argv, path } from "zx";
+import { argv, path, glob } from "zx";
 import { Volume, createFsFromVolume } from "memfs";
 import git from "isomorphic-git";
 import http from "isomorphic-git/http/node";
-import { glob } from "glob";
 import xml2js from "xml2js";
 
 function isBinary(buffer) {
