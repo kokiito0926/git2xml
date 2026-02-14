@@ -4,11 +4,10 @@
 // >> $ ./index.js https://github.com/kokiito0926/hypernode.git --pattern "**/*.js"
 // >> $ ./index.js https://github.com/kokiito0926/hypernode.git --ignore "./package*.json"
 
-import { argv } from "zx";
+import { argv, path } from "zx";
 import { Volume, createFsFromVolume } from "memfs";
 import git from "isomorphic-git";
 import http from "isomorphic-git/http/node";
-import * as path from "path";
 import { glob } from "glob";
 import xml2js from "xml2js";
 
@@ -75,9 +74,7 @@ for (const file of files) {
 	const fullPath = path.posix.join(worktreeDir, file);
 
 	const buffer = await memfs.promises.readFile(fullPath);
-	if (isBinary(buffer)) {
-		continue;
-	}
+	if (isBinary(buffer)) continue;
 
 	let content = buffer.toString("utf8");
 	if (!content) continue;
@@ -92,6 +89,7 @@ for (const file of files) {
 		content: content
 	});
 }
+
 if (!allFiles.length) {
 	process.exit(1);
 }
