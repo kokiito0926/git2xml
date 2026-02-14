@@ -1,6 +1,6 @@
 {
 	"name": "@kokiito0926/git2xml",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"private": false,
 	"description": "Gitのリポジトリ内のファイルをXML形式でまとめることができるコマンドラインのツールです。",
 	"keywords": [
